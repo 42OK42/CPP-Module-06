@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:51 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/09 19:37:07 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/09 19:43:24 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void ScalarConverter::convert(const std::string &literal) {
 					if (ss.fail())
 						throw std::runtime_error("Float conversion failed");
 					
-					// Char Konvertierung
+					// Char conversion
 					if (f > std::numeric_limits<char>::max() || f < std::numeric_limits<char>::min() || std::isnan(f))
 						std::cout << "char: impossible" << std::endl;
 					else if (!std::isprint(static_cast<char>(f)))
@@ -102,14 +102,13 @@ void ScalarConverter::convert(const std::string &literal) {
 					else
 						std::cout << "char: '" << static_cast<char>(f) << "'" << std::endl;
 					
-					// Int Konvertierung
+					// Int conversion
 					if (f > std::numeric_limits<int>::max() || f < std::numeric_limits<int>::min() || std::isnan(f))
 						std::cout << "int: impossible" << std::endl;
 					else
 						std::cout << "int: " << static_cast<int>(f) << std::endl;
 				}
-				
-				// Rest der Float-Ausgabe bleibt gleich
+
 				std::cout << "float: ";
 				if (f == static_cast<int>(f))
 					std::cout << f << ".0f";
@@ -139,7 +138,7 @@ void ScalarConverter::convert(const std::string &literal) {
 					if (ss.fail())
 						throw std::runtime_error("Double conversion failed");
 					
-					// Char Konvertierung
+					// Char conversion
 					if (d > std::numeric_limits<char>::max() || d < std::numeric_limits<char>::min() || std::isnan(d))
 						std::cout << "char: impossible" << std::endl;
 					else if (!std::isprint(static_cast<char>(d)))
@@ -147,7 +146,7 @@ void ScalarConverter::convert(const std::string &literal) {
 					else
 						std::cout << "char: '" << static_cast<char>(d) << "'" << std::endl;
 					
-					// Int Konvertierung
+					// Int conversion
 					if (d > std::numeric_limits<int>::max() || d < std::numeric_limits<int>::min() || std::isnan(d))
 						std::cout << "int: impossible" << std::endl;
 					else

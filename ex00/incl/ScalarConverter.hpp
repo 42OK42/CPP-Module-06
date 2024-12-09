@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:58 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/09 17:37:05 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/09 19:44:26 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,17 @@ class ScalarConverter
 {
 private:
 	// Private constructor to prevent instantiation
-	ScalarConverter(void);
+	ScalarConverter(void) {}
 	// Private copy constructor
-	ScalarConverter(const ScalarConverter &src);
+	ScalarConverter(const ScalarConverter &src) { (void)src; }
 	// Private assignment operator
-	ScalarConverter &operator=(const ScalarConverter &src);
+	ScalarConverter &operator=(const ScalarConverter &src) 
+	{ 
+		(void)src; 
+		return *this; 
+	}
 	// Private destructor
-	~ScalarConverter(void);
+	~ScalarConverter(void) {}
 
 public:
 	// Only public method - static convert function
