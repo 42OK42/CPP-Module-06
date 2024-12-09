@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:51 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/09 15:52:31 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/09 19:37:07 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,42 +81,92 @@ void ScalarConverter::convert(const std::string &literal) {
 				break;
 			}
 			case FLOAT: {
-				float f = std::atof(literal.c_str());
-				std::cout << "char: " << (std::isprint(static_cast<int>(f)) ? std::string(1, static_cast<char>(f)) : "Non displayable") << std::endl;
-				
-				std::ostringstream oss;
-				if (f > std::numeric_limits<int>::max() || f < std::numeric_limits<int>::min()) {
-					oss << "impossible";
+				float f;
+				if (literal == "nanf" || literal == "+inff" || literal == "-inff") {
+					f = (literal == "nanf") ? std::numeric_limits<float>::quiet_NaN() :
+						(literal == "+inff") ? std::numeric_limits<float>::infinity() :
+						-std::numeric_limits<float>::infinity();
+					std::cout << "char: impossible" << std::endl;
+					std::cout << "int: impossible" << std::endl;
 				} else {
-					oss << static_cast<int>(f);
+					std::stringstream ss(literal);
+					ss >> f;
+					if (ss.fail())
+						throw std::runtime_error("Float conversion failed");
+					
+					// Char Konvertierung
+					if (f > std::numeric_limits<char>::max() || f < std::numeric_limits<char>::min() || std::isnan(f))
+						std::cout << "char: impossible" << std::endl;
+					else if (!std::isprint(static_cast<char>(f)))
+						std::cout << "char: Non displayable" << std::endl;
+					else
+						std::cout << "char: '" << static_cast<char>(f) << "'" << std::endl;
+					
+					// Int Konvertierung
+					if (f > std::numeric_limits<int>::max() || f < std::numeric_limits<int>::min() || std::isnan(f))
+						std::cout << "int: impossible" << std::endl;
+					else
+						std::cout << "int: " << static_cast<int>(f) << std::endl;
 				}
-				std::cout << "int: " << oss.str() << std::endl;
 				
-				std::cout << "float: " << f << "f" << std::endl;
-				std::cout << "double: " << static_cast<double>(f) << std::endl;
+				// Rest der Float-Ausgabe bleibt gleich
+				std::cout << "float: ";
+				if (f == static_cast<int>(f))
+					std::cout << f << ".0f";
+				else
+					std::cout << f << "f";
+				std::cout << std::endl;
+				
+				std::cout << "double: ";
+				if (f == static_cast<int>(f))
+					std::cout << static_cast<double>(f) << ".0";
+				else
+					std::cout << static_cast<double>(f);
+				std::cout << std::endl;
 				break;
 			}
 			case DOUBLE: {
-				double d = std::atof(literal.c_str());
-				std::cout << "char: " << (std::isprint(static_cast<int>(d)) ? std::string(1, static_cast<char>(d)) : "Non displayable") << std::endl;
-				
-				std::ostringstream oss;
-				if (d > std::numeric_limits<int>::max() || d < std::numeric_limits<int>::min()) {
-					oss << "impossible";
+				double d;
+				if (literal == "nan" || literal == "+inf" || literal == "-inf") {
+					d = (literal == "nan") ? std::numeric_limits<double>::quiet_NaN() :
+						(literal == "+inf") ? std::numeric_limits<double>::infinity() :
+						-std::numeric_limits<double>::infinity();
+					std::cout << "char: impossible" << std::endl;
+					std::cout << "int: impossible" << std::endl;
 				} else {
-					oss << static_cast<int>(d);
+					std::stringstream ss(literal);
+					ss >> d;
+					if (ss.fail())
+						throw std::runtime_error("Double conversion failed");
+					
+					// Char Konvertierung
+					if (d > std::numeric_limits<char>::max() || d < std::numeric_limits<char>::min() || std::isnan(d))
+						std::cout << "char: impossible" << std::endl;
+					else if (!std::isprint(static_cast<char>(d)))
+						std::cout << "char: Non displayable" << std::endl;
+					else
+						std::cout << "char: '" << static_cast<char>(d) << "'" << std::endl;
+					
+					// Int Konvertierung
+					if (d > std::numeric_limits<int>::max() || d < std::numeric_limits<int>::min() || std::isnan(d))
+						std::cout << "int: impossible" << std::endl;
+					else
+						std::cout << "int: " << static_cast<int>(d) << std::endl;
 				}
-				std::cout << "int: " << oss.str() << std::endl;
 				
-				oss.str(""); // Clear the stream
-				if (d > std::numeric_limits<float>::max() || d < -std::numeric_limits<float>::max()) {
-					oss << "impossible";
-				} else {
-					oss << static_cast<float>(d) << "f";
-				}
-				std::cout << "float: " << oss.str() << std::endl;
+				std::cout << "float: ";
+				if (d == static_cast<int>(d))
+					std::cout << static_cast<float>(d) << ".0f";
+				else
+					std::cout << static_cast<float>(d) << "f";
+				std::cout << std::endl;
 				
-				std::cout << "double: " << d << std::endl;
+				std::cout << "double: ";
+				if (d == static_cast<int>(d))
+					std::cout << d << ".0";
+				else
+					std::cout << d;
+				std::cout << std::endl;
 				break;
 			}
 			default:
