@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:46 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/09 15:19:47 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/09 17:37:01 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <literal>" << std::endl;
-        return 1;
-    }
+	if (argc != 2) {
+		std::cerr << "Usage: " << argv[0] << " <literal>" << std::endl;
+		return 1;
+	}
 
-    std::string literal = argv[1];
-    ScalarConverter::convert(literal);
+	std::string literal = argv[1];
+	ScalarConverter::convert(literal);
 
-    return 0;
+	return 0;
 } 
