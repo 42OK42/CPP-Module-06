@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:51 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/10 15:14:10 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/10 15:39:47 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@ static LiteralType detect_type(const std::string &literal) {
 	if (literal.empty())
 		return INVALID;
 	
-	// Check for char literal ('c')
-	if (literal.length() == 3 && literal[0] == '\'' && literal[2] == '\'')
+	// Check for char literal
+	if (literal.length() == 1)  // Einzelnes Zeichen
+		return CHAR;
+	if (literal.length() == 3 && literal[0] == '\'' && literal[2] == '\'')  // 'c'
 		return CHAR;
 	
 	// Check for special values
@@ -41,32 +43,96 @@ static LiteralType detect_type(const std::string &literal) {
 	if (literal == "nanf" || literal == "+inff" || literal == "-inff" || literal == "inff")
 		return FLOAT;
 
-	// Check for float (contains 'f' at the end)
-	if (literal[literal.length() - 1] == 'f')
-		return FLOAT;
+	size_t point_count = 0;
+	size_t f_count = 0;
+	bool has_digit = false;
+	bool has_digit_after_point = false;
 
-	// Check for decimal point (must be double since float was already checked)
-	if (literal.find('.') != std::string::npos)
-		return DOUBLE;
-
-	// Try to interpret as integer
-	for (size_t i = 0; i < literal.length(); i++) {
-		if (i == 0 && (literal[i] == '-' || literal[i] == '+'))
-			continue;
-		if (!std::isdigit(literal[i]))
+	size_t start = (literal[0] == '-' || literal[0] == '+') ? 1 : 0;
+	
+	for (size_t i = start; i < literal.length(); i++) {
+		if (literal[i] == '.') {
+			point_count++;
+			if (i == literal.length() - 1) // Punkt darf nicht am Ende stehen
+				return INVALID;
+		} else if (literal[i] == 'f') {
+			f_count++;
+			if (i != literal.length() - 1 || !point_count) // f muss am Ende stehen und es muss ein Punkt davor sein
+				return INVALID;
+		} else if (!std::isdigit(literal[i])) {
 			return INVALID;
+		} else {
+			has_digit = true;
+			if (point_count > 0)
+				has_digit_after_point = true;
+		}
 	}
+
+	if (!has_digit || point_count > 1 || f_count > 1)
+		return INVALID;
+
+	// Float muss einen Punkt und mindestens eine Ziffer danach haben
+	if (f_count == 1) {
+		if (!point_count || !has_digit_after_point)
+			return INVALID;
+		return FLOAT;
+	}
+
+	// Double muss einen Punkt und mindestens eine Ziffer danach haben
+	if (point_count == 1) {
+		if (!has_digit_after_point)
+			return INVALID;
+		return DOUBLE;
+	}
+
 	return INT;
+}
+
+template<typename T>
+static T convert_literal(const std::string &literal) {
+	if (literal == "nan" || literal == "nanf")
+		return std::numeric_limits<T>::quiet_NaN();
+	if (literal == "+inf" || literal == "inf" || literal == "+inff" || literal == "inff")
+		return std::numeric_limits<T>::infinity();
+	if (literal == "-inf" || literal == "-inff")
+		return -std::numeric_limits<T>::infinity();
+
+	std::stringstream ss(literal);
+	T value;
+	ss >> value;
+	if (ss.fail())
+		throw std::runtime_error("Conversion failed");
+	return value;
 }
 
 void ScalarConverter::convert(const std::string &literal) {
 	LiteralType type = detect_type(literal);
 
+	//print detected type
+	std::cout << "Detected type: ";
+	switch (type) {
+		case CHAR: std::cout << "CHAR" << std::endl; break;
+		case INT: std::cout << "INT" << std::endl; break;
+		case FLOAT: std::cout << "FLOAT" << std::endl; break;
+		case DOUBLE: std::cout << "DOUBLE" << std::endl; break;
+		default: std::cout << "INVALID" << std::endl; break;
+	}
+
+	if (type == INVALID) {
+		std::cout << "Invalid literal" << std::endl;
+		return;
+	}
+
 	try {
 		switch (type) {
 			case CHAR: {
-				char c = literal[1];
-				std::cout << "char: " << c << std::endl;
+				char c;
+				if (literal.length() == 1)
+					c = literal[0];  // Direktes Zeichen
+				else
+					c = literal[1];  // Zeichen zwischen Anführungszeichen
+				
+				std::cout << "char: '" << c << "'" << std::endl;
 				std::cout << "int: " << static_cast<int>(c) << std::endl;
 				std::cout << "float: " << static_cast<float>(c) << ".0f" << std::endl;
 				std::cout << "double: " << static_cast<double>(c) << ".0" << std::endl;
