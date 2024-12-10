@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:51 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/10 15:39:47 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/10 15:41:13 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static LiteralType detect_type(const std::string &literal) {
 		return INVALID;
 	
 	// Check for char literal
-	if (literal.length() == 1)  // Einzelnes Zeichen
+	if (literal.length() == 1)  // Single character
 		return CHAR;
 	if (literal.length() == 3 && literal[0] == '\'' && literal[2] == '\'')  // 'c'
 		return CHAR;
@@ -53,11 +53,11 @@ static LiteralType detect_type(const std::string &literal) {
 	for (size_t i = start; i < literal.length(); i++) {
 		if (literal[i] == '.') {
 			point_count++;
-			if (i == literal.length() - 1) // Punkt darf nicht am Ende stehen
+			if (i == literal.length() - 1) // Point cannot be at the end
 				return INVALID;
 		} else if (literal[i] == 'f') {
 			f_count++;
-			if (i != literal.length() - 1 || !point_count) // f muss am Ende stehen und es muss ein Punkt davor sein
+			if (i != literal.length() - 1 || !point_count) // 'f' must be at the end and there must be a point before
 				return INVALID;
 		} else if (!std::isdigit(literal[i])) {
 			return INVALID;
@@ -71,14 +71,14 @@ static LiteralType detect_type(const std::string &literal) {
 	if (!has_digit || point_count > 1 || f_count > 1)
 		return INVALID;
 
-	// Float muss einen Punkt und mindestens eine Ziffer danach haben
+	// Float must have a point and at least one digit after it
 	if (f_count == 1) {
 		if (!point_count || !has_digit_after_point)
 			return INVALID;
 		return FLOAT;
 	}
 
-	// Double muss einen Punkt und mindestens eine Ziffer danach haben
+	// Double must have a point and at least one digit after it
 	if (point_count == 1) {
 		if (!has_digit_after_point)
 			return INVALID;
