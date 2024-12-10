@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:51 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/10 15:41:13 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/10 16:31:41 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ static LiteralType detect_type(const std::string &literal) {
 		return INVALID;
 	
 	// Check for char literal
-	if (literal.length() == 1)  // Single character
+	if (literal.length() == 1 && !std::isdigit(literal[0]))  // Single non-digit character
 		return CHAR;
-	if (literal.length() == 3 && literal[0] == '\'' && literal[2] == '\'')  // 'c'
+	if (literal.length() == 3 && literal[0] == '\'' && literal[2] == '\'')  // 'c' or '0'
 		return CHAR;
 	
 	// Check for special values
