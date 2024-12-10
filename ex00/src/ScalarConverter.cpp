@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:51 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/10 16:31:41 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/10 16:33:28 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,9 +128,9 @@ void ScalarConverter::convert(const std::string &literal) {
 			case CHAR: {
 				char c;
 				if (literal.length() == 1)
-					c = literal[0];  // Direktes Zeichen
+					c = literal[0];
 				else
-					c = literal[1];  // Zeichen zwischen Anführungszeichen
+					c = literal[1];
 				
 				std::cout << "char: '" << c << "'" << std::endl;
 				std::cout << "int: " << static_cast<int>(c) << std::endl;
