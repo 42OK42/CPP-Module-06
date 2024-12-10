@@ -6,7 +6,7 @@
 /*   By: okrahl <okrahl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:19:51 by okrahl            #+#    #+#             */
-/*   Updated: 2024/12/09 19:43:24 by okrahl           ###   ########.fr       */
+/*   Updated: 2024/12/10 15:14:10 by okrahl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ static LiteralType detect_type(const std::string &literal) {
 		return CHAR;
 	
 	// Check for special values
-	if (literal == "nan" || literal == "+inf" || literal == "-inf")
+	if (literal == "nan" || literal == "+inf" || literal == "-inf" || literal == "inf")
 		return DOUBLE;
-	if (literal == "nanf" || literal == "+inff" || literal == "-inff")
+	if (literal == "nanf" || literal == "+inff" || literal == "-inff" || literal == "inff")
 		return FLOAT;
 
 	// Check for float (contains 'f' at the end)
@@ -73,8 +73,23 @@ void ScalarConverter::convert(const std::string &literal) {
 				break;
 			}
 			case INT: {
-				int i = std::atoi(literal.c_str());
-				std::cout << "char: " << (std::isprint(i) ? std::string(1, static_cast<char>(i)) : "Non displayable") << std::endl;
+				long long value;
+				std::stringstream ss(literal);
+				ss >> value;
+				
+				if (ss.fail() || value > std::numeric_limits<int>::max() || value < std::numeric_limits<int>::min())
+					throw std::runtime_error("Integer overflow");
+					
+				int i = static_cast<int>(value);
+				
+				// Char conversion
+				if (i > std::numeric_limits<char>::max() || i < std::numeric_limits<char>::min())
+					std::cout << "char: impossible" << std::endl;
+				else if (!std::isprint(static_cast<char>(i)))
+					std::cout << "char: Non displayable" << std::endl;
+				else
+					std::cout << "char: '" << static_cast<char>(i) << "'" << std::endl;
+				
 				std::cout << "int: " << i << std::endl;
 				std::cout << "float: " << static_cast<float>(i) << ".0f" << std::endl;
 				std::cout << "double: " << static_cast<double>(i) << ".0" << std::endl;
@@ -82,9 +97,9 @@ void ScalarConverter::convert(const std::string &literal) {
 			}
 			case FLOAT: {
 				float f;
-				if (literal == "nanf" || literal == "+inff" || literal == "-inff") {
+				if (literal == "nanf" || literal == "+inff" || literal == "-inff" || literal == "inff") {
 					f = (literal == "nanf") ? std::numeric_limits<float>::quiet_NaN() :
-						(literal == "+inff") ? std::numeric_limits<float>::infinity() :
+						(literal == "+inff" || literal == "inff") ? std::numeric_limits<float>::infinity() :
 						-std::numeric_limits<float>::infinity();
 					std::cout << "char: impossible" << std::endl;
 					std::cout << "int: impossible" << std::endl;
@@ -126,9 +141,9 @@ void ScalarConverter::convert(const std::string &literal) {
 			}
 			case DOUBLE: {
 				double d;
-				if (literal == "nan" || literal == "+inf" || literal == "-inf") {
+				if (literal == "nan" || literal == "+inf" || literal == "-inf" || literal == "inf") {
 					d = (literal == "nan") ? std::numeric_limits<double>::quiet_NaN() :
-						(literal == "+inf") ? std::numeric_limits<double>::infinity() :
+						(literal == "+inf" || literal == "inf") ? std::numeric_limits<double>::infinity() :
 						-std::numeric_limits<double>::infinity();
 					std::cout << "char: impossible" << std::endl;
 					std::cout << "int: impossible" << std::endl;
